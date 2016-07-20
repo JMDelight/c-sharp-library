@@ -13,14 +13,14 @@
 #### Book
 * CRUD
 * Atributes
-  * Title
+  * *Title*
   * List of authors
 * Books:Patrons = Many:Many
 * Searchable by Title and Author
 * AddCopy()
 
 #### Patron
-* CRUD
+* *CRUD*
 * Borrow method which takes a Book object as a parameter and takes a due date variable
 * GetFines();
 

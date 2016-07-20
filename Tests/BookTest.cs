@@ -76,6 +76,20 @@ namespace Library
       //Assert
       Assert.Equal(testBook, foundBook);
     }
+    [Fact]
+    public void Test_AddCopy_AddsCopyOfBookToDatabase()
+    {
+      //Arrange
+      Book testBook = new Book("History");
+      testBook.Save();
+
+      //Act
+      Book.AddCopy(testBook.GetId());
+      List<int> copies = Book.GetCopies(testBook.GetId());
+
+      //Assert
+      Assert.Equal(1, copies.Count);
+    }
     public void Dispose()
     {
       Book.DeleteAll();

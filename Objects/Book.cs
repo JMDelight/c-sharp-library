@@ -152,11 +152,64 @@ namespace Library
       }
       return foundBook;
     }
+    public static void AddCopy(int bookId)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("INSERT INTO copies (book_id, checked_out) VALUES (@bookId, 0);", conn);
+
+      SqlParameter bookIdParameter = new SqlParameter();
+      bookIdParameter.ParameterName = "@bookId";
+      bookIdParameter.Value = bookId;
+
+      cmd.Parameters.Add(bookIdParameter);
+      cmd.ExecuteNonQuery();
+
+      if (conn != null)
+      {
+        conn.Close();
+      }
+    }
+    public static List<int> GetCopies(int bookId)
+    {
+      List<int> copyIds = new List<int> {};
+      SqlConnection conn = DB.Connection();
+      SqlDataReader rdr = null;
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("SELECT id FROM copies WHERE book_id = @bookId;", conn);
+
+      SqlParameter bookIdParameter = new SqlParameter();
+      bookIdParameter.ParameterName = "@bookId";
+      bookIdParameter.Value = bookId;
+
+      cmd.Parameters.Add(bookIdParameter);
+
+      rdr = cmd.ExecuteReader();
+
+      while(rdr.Read())
+      {
+        int foundBookId = rdr.GetInt32(0);
+        copyIds.Add(foundBookId);
+      }
+
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
+      return copyIds;
+    }
+
     public static void DeleteAll()
     {
       SqlConnection conn = DB.Connection();
       conn.Open();
-      SqlCommand cmd = new SqlCommand("DELETE FROM books;", conn);
+      SqlCommand cmd = new SqlCommand("DELETE FROM books;DELETE FROM copies", conn);
       cmd.ExecuteNonQuery();
     }
   }

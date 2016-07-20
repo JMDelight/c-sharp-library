@@ -8,12 +8,13 @@
 * As a librarian, I want to see a list of overdue books, so that I can call up the patron who checked them out and tell them to bring them back - OR ELSE!
 
 ### Objects
+
+
 #### Book
 * CRUD
 * Atributes
   * Title
   * List of authors
-  * Boolean Checked Out
 * Books:Patrons = Many:Many
 * Searchable by Title and Author
 * AddCopy()
@@ -28,6 +29,7 @@
 * Authors:Books = Many:Many
 
 #### Copy Table
+* Boolean Checked Out
 * Boolean Checked Out
 * All the same properties as the Book table otherwise
 

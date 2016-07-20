@@ -11,13 +11,13 @@
 
 
 #### Book
-* CRUD
+* *CRUD*
 * Atributes
   * *Title*
   * List of authors
 * Books:Patrons = Many:Many
 * Searchable by Title and Author
-* AddCopy()
+* *AddCopy()*
 
 #### Patron
 * *CRUD*

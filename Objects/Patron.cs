@@ -12,6 +12,7 @@ namespace Library
     private int _phoneNumber;
     private bool _finesOutstanding;
 
+
     public Patron(string patronName, string email, int phoneNumber, int id = 0, bool finesOutstanding = false)
     {
       _patronName = patronName;
@@ -233,6 +234,70 @@ namespace Library
       {
         conn.Close();
       }
+    }
+    public void Checkout(int copyId)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("INSERT INTO checkouts (copy_id, patron_id, due_date, return_date) VALUES(@copyId, @patronId, @dueDate, @returnDate); UPDATE copies SET checked_out = 1;", conn);
+
+      SqlParameter patronIdParameter = new SqlParameter();
+      patronIdParameter.ParameterName = "@patronId";
+      patronIdParameter.Value = this.GetId();
+      cmd.Parameters.Add(patronIdParameter);
+
+      SqlParameter copyIdParameter = new SqlParameter();
+      copyIdParameter.ParameterName = "@copyId";
+      copyIdParameter.Value = copyId;
+      cmd.Parameters.Add(copyIdParameter);
+
+      SqlParameter dueDateParameter = new SqlParameter();
+      dueDateParameter.ParameterName = "@dueDate";
+      dueDateParameter.Value = DateTime.Now.AddDays(30);
+      cmd.Parameters.Add(dueDateParameter);
+
+      SqlParameter returnDateParameter = new SqlParameter();
+      returnDateParameter.ParameterName = "@returnDate";
+      returnDateParameter.Value = new DateTime(2000,1,1);
+      cmd.Parameters.Add(returnDateParameter);
+
+      cmd.ExecuteNonQuery();
+
+      if (conn != null)
+      {
+        conn.Close();
+      }
+    }
+    public List<int> GetUnreturnedBooks()
+    {
+      List<int> copyIds = new List<int> {};
+      SqlConnection conn = DB.Connection();
+      SqlDataReader rdr = null;
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("SELECT copy_id FROM checkouts WHERE patron_id = @patronId AND return_date =  '2000-01-01';" ,conn);
+
+      SqlParameter patronIdParameter = new SqlParameter();
+      patronIdParameter.ParameterName = "@patronId";
+      patronIdParameter.Value = this.GetId();
+      cmd.Parameters.Add(patronIdParameter);
+
+      rdr = cmd.ExecuteReader();
+      while(rdr.Read())
+      {
+        int foundCopyId = rdr.GetInt32(0);
+        copyIds.Add(foundCopyId);
+      }
+      if(rdr != null)
+      {
+        rdr.Close();
+      }
+      if(conn != null)
+      {
+        conn.Close();
+      }
+      return copyIds;
     }
     public static void Delete(int QueryId)
     {

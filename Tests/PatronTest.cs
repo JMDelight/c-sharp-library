@@ -105,9 +105,29 @@ namespace Library
 
       Assert.Equal(1, Patron.GetAll().Count);
     }
+    [Fact]
+    public void Test_Checkout_CheckoutsSpecifiedBookCopyFromDatabase()
+    {
+      //Arrange
+      Patron testPatron = new Patron("Bob", "Bob@bob.bob", 2);
+      Book testBook = new Book("History");
+      Book testBook2 = new Book("Biology");
+
+      testPatron.Save();
+      testBook.Save();
+      testBook2.Save();
+      Book.AddCopy(testBook.GetId());
+
+
+      //Act
+      testPatron.Checkout(Book.GetCopies(testBook.GetId())[0]);
+
+      Assert.Equal(1, testPatron.GetUnreturnedBooks().Count);
+    }
     public void Dispose()
     {
       Patron.DeleteAll();
+      Book.DeleteAll();
     }
   }
 }

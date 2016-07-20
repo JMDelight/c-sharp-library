@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Books</title>
+  </head>
+  <body>
+    @foreach(var book in Model)
+    {
+      <h4><a href='/books/@book.GetId()'>@book.GetTitle()</a></h4>
+    }
+
+    <form class="form-group" action="/books" method="post">
+      <label for="book-title">Enter Book's Title:</label>
+      <input type="text" name="book-title" required>
+      <label for="book-author">Enter Book's Author:</label>
+      <input type="text" name="book-author">
+      <label for="book-genre">Select a genre:</label>
+      <select name="book-genre">
+        <option value="1">Fiction</option>
+        <option value="2">Non-Fiction</option>
+      </select>
+      <button class="btn" type="submit" name="button">Submit</button>
+    </form>
+    <a href="/">Return Home</a> |
+    <a href="/patrons">Patrons</a>
+  </body>
+</html>

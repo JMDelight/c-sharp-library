@@ -208,6 +208,20 @@ namespace Library
       }
       return copyIds;
     }
+    public static List<Book> AllCopies()
+    {
+      List<Book> allBooks = Book.GetAll();
+      List<Book> allCopies = new List<Book> {};
+      foreach(Book book in allBooks)
+      {
+        List<int> allTheseBooks = Book.GetCopies(book.GetId());
+        foreach(int copyId in allTheseBooks)
+        {
+          allCopies.Add(book);
+        }
+      }
+      return allCopies;
+    }
     public static void Update(int queryId, Book updateBook)
     {
       SqlConnection conn = DB.Connection();

@@ -16,7 +16,21 @@ namespace Library
       _genreId = genreId;
       _id = id;
     }
-
+    public override bool Equals(System.Object otherBook)
+    {
+        if (!(otherBook is Book))
+        {
+          return false;
+        }
+        else
+        {
+          Book newBook = (Book) otherBook;
+          bool idEquality = this.GetId() == newBook.GetId();
+          bool titleEquality = this.GetTitle() == newBook.GetTitle();
+          bool genreIdEquality = this.GetGenreId() == newBook.GetGenreId();
+          return (idEquality && titleEquality && genreIdEquality);
+        }
+    }
     public string GetTitle()
     {
       return _title;
@@ -69,6 +83,46 @@ namespace Library
       }
       return allBooks;
     }
+    public void Save()
+    {
+      SqlConnection conn = DB.Connection();
+      SqlDataReader rdr;
+      conn.Open();
 
+      SqlCommand cmd = new SqlCommand("INSERT INTO books (title, genre_id) OUTPUT INSERTED.id VALUES (@BookTitle, @GenreId);", conn);
+
+      SqlParameter titleParameter = new SqlParameter();
+      titleParameter.ParameterName = "@BookTitle";
+      titleParameter.Value = this.GetTitle();
+
+      SqlParameter genreIdParameter = new SqlParameter();
+      genreIdParameter.ParameterName = "@GenreId";
+      genreIdParameter.Value = this.GetGenreId();
+
+      cmd.Parameters.Add(titleParameter);
+      cmd.Parameters.Add(genreIdParameter);
+
+      rdr = cmd.ExecuteReader();
+
+      while(rdr.Read())
+      {
+        this._id = rdr.GetInt32(0);
+      }
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
+    }
+    public static void DeleteAll()
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+      SqlCommand cmd = new SqlCommand("DELETE FROM books;", conn);
+      cmd.ExecuteNonQuery();
+    }
   }
 }

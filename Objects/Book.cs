@@ -53,6 +53,10 @@ namespace Library
     {
       return _id;
     }
+    public void SetId(int newId)
+    {
+      _id = newId;
+    }
 
     public static List<Book> GetAll()
     {
@@ -204,7 +208,52 @@ namespace Library
       }
       return copyIds;
     }
+    public static void Update(int queryId, Book updateBook)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
 
+      SqlCommand cmd = new SqlCommand("UPDATE books SET title = @bookTitle, genre_id = @genreId WHERE id = @queryId;", conn);
+
+      SqlParameter titleParameter = new SqlParameter();
+      titleParameter.ParameterName = "@bookTitle";
+      titleParameter.Value = updateBook.GetTitle();
+      cmd.Parameters.Add(titleParameter);
+
+      SqlParameter queryIdParameter = new SqlParameter();
+      queryIdParameter.ParameterName = "@queryId";
+      queryIdParameter.Value = queryId;
+      cmd.Parameters.Add(queryIdParameter);
+
+      SqlParameter genreIdParameter = new SqlParameter();
+      genreIdParameter.ParameterName = "@genreId";
+      genreIdParameter.Value = updateBook.GetGenreId();
+      cmd.Parameters.Add(genreIdParameter);
+
+      cmd.ExecuteNonQuery();
+
+      if (conn != null)
+      {
+        conn.Close();
+      }
+    }
+    public static void Delete(int QueryId)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+      SqlCommand cmd = new SqlCommand("DELETE FROM books WHERE id = @BookId;", conn);
+      SqlParameter bookIdParameter = new SqlParameter();
+      bookIdParameter.ParameterName = "@BookId";
+      bookIdParameter.Value = QueryId.ToString();
+      cmd.Parameters.Add(bookIdParameter);
+
+      cmd.ExecuteNonQuery();
+
+      if (conn != null)
+      {
+        conn.Close();
+      }
+    }
     public static void DeleteAll()
     {
       SqlConnection conn = DB.Connection();

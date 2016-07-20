@@ -90,6 +90,35 @@ namespace Library
       //Assert
       Assert.Equal(1, copies.Count);
     }
+    [Fact]
+    public void Test_Update_UpdatesInfoInDatabaseToMatchInstance()
+    {
+      //Arrange
+      Book testBook = new Book("History");
+      Book testBook2 = new Book("Biology");
+      testBook.Save();
+
+      //Act
+      Book.Update(testBook.GetId(), testBook2);
+      Book foundBook = Book.Find(testBook.GetId());
+      testBook2.SetId(testBook.GetId());
+      //Assert
+      Assert.Equal(testBook2, foundBook);
+    }
+    [Fact]
+    public void Test_Delete_DeletesSpecifiedBookFromDatabaseAndNoOthers()
+    {
+      //Arrange
+      Book testBook = new Book("History");
+      Book testBook2 = new Book("Biology");
+      testBook.Save();
+      testBook2.Save();
+
+      //Act
+      Book.Delete(testBook.GetId());
+
+      Assert.Equal(1, Book.GetAll().Count);
+    }
     public void Dispose()
     {
       Book.DeleteAll();

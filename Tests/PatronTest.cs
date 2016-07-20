@@ -76,6 +76,35 @@ namespace Library
       //Assert
       Assert.Equal(testPatron, foundPatron);
     }
+    [Fact]
+    public void Test_Update_UpdatesInfoInDatabaseToMatchInstance()
+    {
+      //Arrange
+      Patron testPatron = new Patron("Bob", "Bob@bob.bob", 2);
+      Patron testPatron2 = new Patron("Bill", "Bill@bob.bob", 3);
+      testPatron.Save();
+
+      //Act
+      Patron.Update(testPatron.GetId(), testPatron2);
+      Patron foundPatron = Patron.Find(testPatron.GetId());
+      testPatron2.SetId(testPatron.GetId());
+      //Assert
+      Assert.Equal(testPatron2, foundPatron);
+    }
+    [Fact]
+    public void Test_Delete_DeletesSpecifiedPatronFromDatabaseAndNoOthers()
+    {
+      //Arrange
+      Patron testPatron = new Patron("Bob", "Bob@bob.bob", 2);
+      Patron testPatron2 = new Patron("Bill", "Bill@bob.bob", 3);
+      testPatron.Save();
+      testPatron2.Save();
+
+      //Act
+      Patron.Delete(testPatron.GetId());
+
+      Assert.Equal(1, Patron.GetAll().Count);
+    }
     public void Dispose()
     {
       Patron.DeleteAll();

@@ -73,6 +73,10 @@ namespace Library
     {
       return _id;
     }
+    public void SetId(int newId)
+    {
+      _id = newId;
+    }
 
     public static List<Patron> GetAll()
     {
@@ -188,6 +192,64 @@ namespace Library
         conn.Close();
       }
       return foundPatron;
+    }
+
+    public static void Update(int queryId, Patron updatePatron)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("UPDATE patrons SET name = @patronName, email = @email, phone_number = @phoneNumber, fines_outstanding = @finesOutstanding  WHERE id = @queryId;", conn);
+
+      SqlParameter nameParameter = new SqlParameter();
+      nameParameter.ParameterName = "@patronName";
+      nameParameter.Value = updatePatron.GetPatronName();
+      cmd.Parameters.Add(nameParameter);
+
+      SqlParameter queryIdParameter = new SqlParameter();
+      queryIdParameter.ParameterName = "@queryId";
+      queryIdParameter.Value = queryId;
+      cmd.Parameters.Add(queryIdParameter);
+
+      SqlParameter emailParameter = new SqlParameter();
+      emailParameter.ParameterName = "@email";
+      emailParameter.Value = updatePatron.GetEmail();
+      cmd.Parameters.Add(emailParameter);
+
+      SqlParameter phoneNumberParameter = new SqlParameter();
+      phoneNumberParameter.ParameterName = "@phoneNumber";
+      phoneNumberParameter.Value = updatePatron.GetPhoneNumber();
+      cmd.Parameters.Add(phoneNumberParameter);
+
+      SqlParameter finesOutstandingParameter = new SqlParameter();
+      finesOutstandingParameter.ParameterName = "@finesOutstanding";
+      finesOutstandingParameter.Value = updatePatron.GetFinesOutstanding();
+      cmd.Parameters.Add(finesOutstandingParameter);
+
+
+      cmd.ExecuteNonQuery();
+
+      if (conn != null)
+      {
+        conn.Close();
+      }
+    }
+    public static void Delete(int QueryId)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+      SqlCommand cmd = new SqlCommand("DELETE FROM patrons WHERE id = @PatronId;", conn);
+      SqlParameter patronIdParameter = new SqlParameter();
+      patronIdParameter.ParameterName = "@PatronId";
+      patronIdParameter.Value = QueryId.ToString();
+      cmd.Parameters.Add(patronIdParameter);
+
+      cmd.ExecuteNonQuery();
+
+      if (conn != null)
+      {
+        conn.Close();
+      }
     }
     public static void DeleteAll()
     {

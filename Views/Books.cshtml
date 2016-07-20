@@ -5,10 +5,22 @@
     <title>Books</title>
   </head>
   <body>
-    @foreach(var book in Model)
-    {
-      <h4><a href='/books/@book.GetId()'>@book.GetTitle()</a></h4>
-    }
+    <table>
+      <tr>
+        <td>title</td>
+        <td>Add</td>
+      </tr>
+      @foreach(var pair in Model)
+      {
+        <tr>
+          <td><h4><a href='/books/@pair.Key'>@pair.Value.GetTitle()</a></h4></td>
+          <td><form action="/books/@pair.Key/addcopy" method="post">
+            <button type="submit" name="button">Add a Copy of this Book</button>
+          </form></td>
+        </tr>
+      }
+
+    </table>
 
     <form class="form-group" action="/books" method="post">
       <label for="book-title">Enter Book's Title:</label>

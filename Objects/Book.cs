@@ -208,19 +208,61 @@ namespace Library
       }
       return copyIds;
     }
-    public static List<Book> AllCopies()
+    public static List<int> AllCopies()
     {
       List<Book> allBooks = Book.GetAll();
-      List<Book> allCopies = new List<Book> {};
+      List<int> allCopyIds = new List<int> {};
       foreach(Book book in allBooks)
       {
-        List<int> allTheseBooks = Book.GetCopies(book.GetId());
-        foreach(int copyId in allTheseBooks)
-        {
-          allCopies.Add(book);
-        }
+         allCopyIds.AddRange(Book.GetCopies(book.GetId()));
       }
-      return allCopies;
+      return allCopyIds;
+    }
+    public static Book FindByCopyId(int queryId)
+    {
+      SqlConnection conn = DB.Connection();
+      SqlDataReader rdr = null;
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("SELECT * FROM copies WHERE id = @queryId;", conn);
+      SqlParameter queryIdParameter = new SqlParameter();
+      queryIdParameter.ParameterName = "@queryId";
+      queryIdParameter.Value = queryId.ToString();
+      cmd.Parameters.Add(queryIdParameter);
+      rdr = cmd.ExecuteReader();
+
+      int foundBookId = 0;
+      string foundBookTitle = null;
+      int foundGenreId = 0;
+
+      while(rdr.Read())
+      {
+        foundBookId = rdr.GetInt32(0);
+        foundBookTitle = rdr.GetString(1);
+        foundGenreId = rdr.GetInt32(2);
+      }
+      Book foundBook = new Book(foundBookTitle, foundBookId, foundGenreId);
+
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
+      return foundBook;
+    }
+    public static Dictionary<string, object> AllCopyIdBookPairs()
+    {
+      Dictionary<string, object> copyIdBookPairs = new Dictionary<string, object>{};
+      foreach(int copyId in Book.AllCopies())
+      {
+        string copyIdString = copyId.ToString();
+        Book dictionaryBook = Book.FindByCopyId(copyId);
+        copyIdBookPairs.Add(copyIdString, dictionaryBook);
+      }
+      return copyIdBookPairs;
     }
     public static void Update(int queryId, Book updateBook)
     {

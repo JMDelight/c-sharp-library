@@ -7,15 +7,26 @@
   <body>
     <table>
       <tr>
-        <td>title</td>
+        <td>Title</td>
+        <td>Authors</td>
         <td>Add</td>
       </tr>
       @foreach(var pair in Model)
       {
         <tr>
           <td><h4><a href='/books/@pair.Value.GetId()'>@pair.Value.GetTitle()</a></h4></td>
-          <td><form action="/books/@pair.Key/addcopy" method="post">
+          <td>
+            @foreach(var author in @pair.Value.GetAuthors())
+            {
+              @author.GetAuthorName()<br>
+            }
+          </td>
+          <td><form action="/books/@pair.Value.GetId()/addcopy" method="post">
             <button type="submit" name="button">Add a Copy of this Book</button>
+          </form></td>
+          <td><form action="/books/@pair.Key" method="post">
+            <button type="submit" name="button">Delete</button>
+            <input type="hidden" name="_method" value="DELETE">
           </form></td>
         </tr>
       }

@@ -321,6 +321,24 @@ namespace Library
       }
       return copyIdBookPairs;
     }
+    public static void DeleteCopy(int QueryId)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+      SqlCommand cmd = new SqlCommand("DELETE FROM copies WHERE id = @copyId;", conn);
+      SqlParameter bookIdParameter = new SqlParameter();
+      bookIdParameter.ParameterName = "@copyId";
+      bookIdParameter.Value = QueryId.ToString();
+      cmd.Parameters.Add(bookIdParameter);
+
+      cmd.ExecuteNonQuery();
+
+      if (conn != null)
+      {
+        conn.Close();
+      }
+    }
+
     public static void Update(int queryId, Book updateBook)
     {
       SqlConnection conn = DB.Connection();

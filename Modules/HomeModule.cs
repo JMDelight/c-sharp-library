@@ -19,7 +19,7 @@ namespace Library
       };
       Post["/books/{id}/addcopy"] =chocolate=> {
         Book.AddCopy(chocolate.id);
-        return View["books.cshtml", Book.AllCopies()];
+        return View["books.cshtml", Book.AllCopyIdBookPairs()];
       };
       Get["/books/{id}"] =parameters=> {
         Dictionary<string, object> model = new Dictionary<string, object>{};
@@ -48,6 +48,10 @@ namespace Library
         model.Add("book", foundBook);
         model.Add("authors", allAuthors);
         return View["book.cshtml", model];
+      };
+      Delete["/books/{id}"] =parameters=> {
+        Book.DeleteCopy(parameters.id);
+        return View["books.cshtml", Book.AllCopyIdBookPairs()];
       };
       Get["/patrons"] =_=> View["patrons.cshtml", Patron.GetAll()];
       Post["/patrons"] =_=> {

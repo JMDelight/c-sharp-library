@@ -2,9 +2,35 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>@Model.GetTitle()</title>
+    <title>@Model["book"].GetTitle()</title>
   </head>
   <body>
-    
+    <h1>@Model["book"].GetTitle()</h1>
+    <h4>Authors:</h4>
+    <ul>
+      @foreach(var author in Model["book"].GetAuthors())
+      {
+        <li>@author.GetAuthorName()</li>
+      }
+    </ul>
+
+    <h4>Add an author to @Model["book"].GetTitle():</h4>
+    <form class="form-group" action='/books/@Model["book"].GetId()/author' method="post">
+      <select name="author-id">
+        @foreach (var author in Model["authors"])
+        {
+          <option value="@author.GetId()">@author.GetAuthorName()</option>
+        }
+      </select>
+      <input type="hidden" name="book-id" value='@Model["book"].GetId()'>
+      <button class="btn" type="submit" name="button">Submit</button>
+    </form>
+    <h4>Add a new author to @Model["book"].GetTitle():</h4>
+    <form class="form-group" action='/books/@Model["book"].GetId()/newauthor' method="post">
+      <label for="author-name">Enter Author's Name:</label>
+      <input type="text" name="author-name" required>
+      <input type="hidden" name="book-id" value='@Model["book"].GetId()'>
+      <button class="btn" type="submit" name="button">Submit</button>
+    </form>
   </body>
 </html>

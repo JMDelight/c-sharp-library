@@ -156,6 +156,63 @@ namespace Library
       }
       return foundBook;
     }
+    public void AddAuthor(Author bookAuthor)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("INSERT INTO authors_books (author_id, book_id) VALUES (@authorId, @bookId);", conn);
+
+      SqlParameter authorIdParameter = new SqlParameter();
+      authorIdParameter.ParameterName = "@authorId";
+      authorIdParameter.Value = bookAuthor.GetId();
+      cmd.Parameters.Add(authorIdParameter);
+
+      SqlParameter bookIdParameter = new SqlParameter();
+      bookIdParameter.ParameterName = "@bookId";
+      bookIdParameter.Value = this.GetId();
+      cmd.Parameters.Add(bookIdParameter);
+
+      cmd.ExecuteNonQuery();
+
+      if (conn != null)
+      {
+        conn.Close();
+      }
+    }
+
+    public List<Author> GetAuthors()
+    {
+      List<Author> booksAuthors = new List<Author> {};
+      SqlConnection conn = DB.Connection();
+      SqlDataReader rdr = null;
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("SELECT authors.* FROM books JOIN authors_books ON (books.id = authors_books.book_id) JOIN authors ON (authors_books.author_id = authors.id) WHERE books.id = @bookId;", conn);
+      SqlParameter bookIdParameter = new SqlParameter();
+      bookIdParameter.ParameterName = "@bookId";
+      bookIdParameter.Value = this.GetId().ToString();
+      cmd.Parameters.Add(bookIdParameter);
+      rdr = cmd.ExecuteReader();
+
+      while(rdr.Read())
+      {
+        int foundAuthorId = rdr.GetInt32(0);
+        string foundAuthorName = rdr.GetString(1);
+        Author foundAuthor = new Author(foundAuthorName, foundAuthorId);
+        booksAuthors.Add(foundAuthor);
+      }
+
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
+      return booksAuthors;
+    }
     public static void AddCopy(int bookId)
     {
       SqlConnection conn = DB.Connection();
@@ -224,7 +281,7 @@ namespace Library
       SqlDataReader rdr = null;
       conn.Open();
 
-      SqlCommand cmd = new SqlCommand("SELECT * FROM copies WHERE id = @queryId;", conn);
+      SqlCommand cmd = new SqlCommand("SELECT books.* FROM copies JOIN books ON (copies.book_id = books.id) WHERE copies.id = @queryId;", conn);
       SqlParameter queryIdParameter = new SqlParameter();
       queryIdParameter.ParameterName = "@queryId";
       queryIdParameter.Value = queryId.ToString();

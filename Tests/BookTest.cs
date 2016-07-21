@@ -119,6 +119,30 @@ namespace Library
 
       Assert.Equal(1, Book.GetAll().Count);
     }
+    [Fact]
+    public void Test_AddAuthorsGetAuthors_AddsAndRetrievesAuthorsForBookObject()
+    {
+      //Arrange
+      Book testBook = new Book("History");
+      Book testBook2 = new Book("Biology");
+      testBook.Save();
+      testBook2.Save();
+      Author testAuthor = new Author("Bill");
+      Author testAuthor2 = new Author("Bob");
+      Author testAuthor3 = new Author("Frank");
+      testAuthor.Save();
+      testAuthor3.Save();
+      testAuthor2.Save();
+      List <Author> expectedAuthors = new List<Author> {testAuthor, testAuthor3};
+
+      //Act
+      testBook.AddAuthor(testAuthor);
+      testBook.AddAuthor(testAuthor3);
+      List<Author> result = testBook.GetAuthors();
+
+      //Assert
+      Assert.Equal(expectedAuthors, result);
+    }
     public void Dispose()
     {
       Book.DeleteAll();

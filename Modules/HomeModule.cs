@@ -15,11 +15,6 @@ namespace Library
         Book newBook = new Book(Request.Form["book-title"], genreId: Request.Form["book-genre"]);
         newBook.Save();
         Book.AddCopy(newBook.GetId());
-        foreach(var pair in Book.AllCopyIdBookPairs())
-        {
-          System.Console.WriteLine(pair.Key);
-          System.Console.WriteLine(pair.Value);
-        }
         return View["books.cshtml", Book.AllCopyIdBookPairs()];
       };
       Post["/books/{id}/addcopy"] =chocolate=> {
@@ -27,8 +22,32 @@ namespace Library
         return View["books.cshtml", Book.AllCopies()];
       };
       Get["/books/{id}"] =parameters=> {
+        Dictionary<string, object> model = new Dictionary<string, object>{};
         Book foundBook = Book.Find(parameters.id);
-        return View["book.cshtml", foundBook];
+        List<Author> allAuthors = Author.GetAll();
+        model.Add("book", foundBook);
+        model.Add("authors", allAuthors);
+        return View["book.cshtml", model];
+      };
+      Post["/books/{id}/author"] =parameters=> {
+        Dictionary<string, object> model = new Dictionary<string, object>{};
+        Book foundBook = Book.Find(parameters.id);
+        foundBook.AddAuthor(Author.Find(Request.Form["author-id"]));
+        List<Author> allAuthors = Author.GetAll();
+        model.Add("book", foundBook);
+        model.Add("authors", allAuthors);
+        return View["book.cshtml", model];
+      };
+      Post["/books/{id}/newauthor"] =parameters=> {
+        Dictionary<string, object> model = new Dictionary<string, object>{};
+        Author newAuthor = new Author(Request.Form["author-name"]);
+        newAuthor.Save();
+        Book foundBook = Book.Find(parameters.id);
+        foundBook.AddAuthor(newAuthor);
+        List<Author> allAuthors = Author.GetAll();
+        model.Add("book", foundBook);
+        model.Add("authors", allAuthors);
+        return View["book.cshtml", model];
       };
       Get["/patrons"] =_=> View["patrons.cshtml", Patron.GetAll()];
       Post["/patrons"] =_=> {

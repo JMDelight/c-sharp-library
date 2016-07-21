@@ -13,7 +13,7 @@
       @foreach(var pair in Model)
       {
         <tr>
-          <td><h4><a href='/books/@pair.Key'>@pair.Value.GetTitle()</a></h4></td>
+          <td><h4><a href='/books/@pair.Value.GetId()'>@pair.Value.GetTitle()</a></h4></td>
           <td><form action="/books/@pair.Key/addcopy" method="post">
             <button type="submit" name="button">Add a Copy of this Book</button>
           </form></td>
